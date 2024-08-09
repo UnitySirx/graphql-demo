@@ -1,0 +1,6 @@
+query queryPerson($id: String!) {
+    person(id: $id) {
+        id
+        name
+    }
+}

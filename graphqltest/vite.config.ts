@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import {resolve} from "path";
+import graphql from "@rollup/plugin-graphql";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(),graphql()],
   build: {
     // outDir: "D:\\usCode\\qinrun\\XFS\\xfs-api\\xfs-api\\wwwroot",
     rollupOptions: {
@@ -26,6 +27,11 @@ export default defineConfig({
         target:'http://localhost:5293/',
         changeOrigin:true,
         rewrite:path => path.replace(/^\/graphql/,'/graphql')
+      },
+      '/ws':{
+        target:'ws://localhost:5293/',
+        changeOrigin:true,
+        rewrite:path => path.replace(/^\/ws/,'/graphql')
       }
     }
   },

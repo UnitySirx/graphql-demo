@@ -6,6 +6,10 @@
     <button @click="updatePerson">Update Person</button>
     <button @click="deletePerson">Delete Person</button>
 
+    <div>
+      Person:Data = {{personData?.person?.id}},{{personData?.person?.name}}
+    </div>
+
     <div v-if="peopleData?.people">
       <h2>People List:</h2>
       <ul>
@@ -18,6 +22,14 @@
 <script setup lang="ts">
 import {useQuery,useMutation} from '@vue/apollo-composable';
 import gql from "graphql-tag";
+import {reactive} from "vue";
+import {cloneDeep} from "@apollo/client/utilities";
+
+import query_people from "@/graphql/query_people.graphql";
+import create_person from "@/graphql/create_person.graphql";
+import query_person from "@/graphql/query_person.graphql";
+import update_person from "@/graphql/update_person.graphql";
+import delete_person from "@/graphql/delete_person.graphql";
 
 interface Person {
   id: string;
@@ -36,78 +48,39 @@ interface UpdatePersonInput {
   name: string;
 }
 
-const GET_PEOPLE = gql`
-  query people {
-    people {
-      id
-      name
-    }
-  }
-`;
-
-const CREATE_PERSON = gql`
-  mutation createPerson {
-    createPerson(input: { name: "UnitySIr" }) {
-      id
-      name
-    }
-  }
-`;
-
-const GET_PERSON = gql`
-  query person($id: ID!) {
-    person(id: $id) {
-      id
-      name
-    }
-  }
-`;
-
-const UPDATE_PERSON = gql`
-  mutation updatePerson($id: ID!, $input: UpdatePersonInput!) {
-    updatePerson(id: $id, input: $input) {
-      id
-      name
-    }
-  }
-`;
-
-const DELETE_PERSON = gql`
-  mutation deletePerson($id: ID!) {
-    deletePerson(id: $id)
-  }
-`;
-
-// Queries and mutations
-const { result: peopleData, refetch: refetchPeople } = useQuery<PeopleData>(GET_PEOPLE);
-
-const { mutate: createPersonMutation } = useMutation<{ createPerson: Person }, { input: CreatePersonInput }>(CREATE_PERSON);
-const { mutate: updatePersonMutation } = useMutation<{ updatePerson: Person }, { id: string, input: UpdatePersonInput }>(UPDATE_PERSON);
-const { mutate: deletePersonMutation } = useMutation<{ deletePerson: boolean }, { id: string }>(DELETE_PERSON);
+const { result: peopleData, refetch: refetchPeople } = useQuery<PeopleData>(gql`${query_people}`);
+const { refetch: refetchPerson } = useQuery<Person>(gql`${query_person}`,{ id: "" });
+const { mutate: createPersonMutation } = useMutation<{ createPerson: Person }, { input: CreatePersonInput }>(gql`${create_person}`);
+const { mutate: updatePersonMutation } = useMutation<{ updatePerson: Person }, { id: string, input: UpdatePersonInput }>(gql`${update_person}`);
+const { mutate: deletePersonMutation } = useMutation<{ deletePerson: boolean }, { id: string }>(gql`${delete_person}`);
 
 const createPerson = async () => {
   await createPersonMutation({
-    input: { name: "UnitySIr" }
+    input: { name: "UnitySir" }
   });
   refetchPeople();
 };
 
+const personData = reactive({} as Person)
 const getPerson = async () => {
-  const { result } = useQuery<{ person: Person }, { id: string }>(GET_PERSON, { id: "95a7d9cd2bf44f0caa7068a93b25ee55" });
-  console.log(result.value);
+  await refetchPerson({id: "24ac67596bf342d0be0a7339bbd43836"})?.then(res => {
+    const cloneData = cloneDeep(res.data);
+    Object.assign(personData, cloneData)
+    personData.person.name = "Unitysir-JACK" //代码中修改名称
+  })
 };
 
 const updatePerson = async () => {
   await updatePersonMutation({
-      id: "95a7d9cd2bf44f0caa7068a93b25ee55",
-      input: { name: "3-UnitySir" }
+    id: "24ac67596bf342d0be0a7339bbd43836",
+    input: { name: "3-UnitySir" }
   });
   refetchPeople();
 };
 
 const deletePerson = async () => {
   await deletePersonMutation({
-      id: "95a7d9cd2bf44f0caa7068a93b25ee55"
+    id: "24ac67596bf342d0be0a7339bbd43836"
   });
   refetchPeople();
 };
@@ -115,7 +88,4 @@ const deletePerson = async () => {
 const getPeople = async () => {
   await refetchPeople();
 };
-
-
-
 </script>

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import HelloWorld from "@/components/HelloWorld.vue";
+import Upload from "@/components/Upload.vue";
+import Subscription from "@/components/Subscription.vue";
 </script>
 
 <template>
+  <Subscription/>
+  <Upload/>
   <HelloWorld/>
 </template>
 
