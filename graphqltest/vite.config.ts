@@ -7,7 +7,8 @@ import graphql from "@rollup/plugin-graphql";
 export default defineConfig({
   plugins: [vue(),graphql()],
   build: {
-    // outDir: "D:\\usCode\\qinrun\\XFS\\xfs-api\\xfs-api\\wwwroot",
+    minify: 'esbuild',
+    outDir: "D:\\usCode\\CSharp\\Console\\sqlite_test\\WebEmptyVS\\wwwroot",
     rollupOptions: {
       output: {
         // 如果需要进一步配置输出，例如设置 chunk 名称格式，可以在这里添加
@@ -24,14 +25,14 @@ export default defineConfig({
     cors:true,
     proxy:{
       '/graphql':{
-        target:'http://localhost:5293/',
+        target:'http://localhost:5293',
         changeOrigin:true,
         rewrite:path => path.replace(/^\/graphql/,'/graphql')
       },
       '/ws':{
-        target:'ws://localhost:5293/',
+        target:'ws://localhost:5293',
         changeOrigin:true,
-        rewrite:path => path.replace(/^\/ws/,'/graphql')
+        rewrite:path => path.replace(/^\/ws/,'/ws')
       }
     }
   },

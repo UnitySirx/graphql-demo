@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreeSql.Provider.SqliteCore" Version="3.2.832" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.8" />
-    <PackageReference Include="SqlSugarCore" Version="5.1.4.160" />
+    <PackageReference Include="FreeSql.Provider.SqliteCore" Version="3.2.833" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlcipher" Version="2.1.10" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.170" />
   </ItemGroup>
 
   <ItemGroup>

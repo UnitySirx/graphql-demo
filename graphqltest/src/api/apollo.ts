@@ -6,7 +6,10 @@ import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 
 const wsLink = new GraphQLWsLink(createClient({
-    url: '/ws', // 替换为你的 GraphQL WebSocket 端点
+    url: '/ws',
+    lazy: true,
+    keepAlive: 10_000,
+    retryAttempts: 30,
 }));
 
 const link = createUploadLink({

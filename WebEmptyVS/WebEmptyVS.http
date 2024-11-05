@@ -1,0 +1,6 @@
+@WebEmptyVS_HostAddress = http://localhost:5220
+
+GET {{WebEmptyVS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

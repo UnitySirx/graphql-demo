@@ -1,0 +1,52 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"""
+The purpose of the `cost` directive is to define a `weight` for GraphQL types, fields, and arguments. Static analysis can use these weights when calculating the overall cost of a query or response.
+"""
+directive @cost(
+  """
+  The `weight` argument defines what value to add to the overall cost for every appearance, or possible appearance, of a type, field, argument, etc.
+  """
+  weight: String!
+) on ARGUMENT_DEFINITION | ENUM | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | OBJECT | SCALAR
+
+type Mutation {
+  createPerson(input: PersonInput!): Person!
+  createPersonRange(inputs: [PersonInput!]!): [Person!]!
+  deletePerson(id: String!): Boolean!
+  updatePerson(id: String!, input: UpdatePersonInput!): Person!
+  uploadFile(input: UploadFileInput!): String!
+}
+
+type Person {
+  id: String!
+  name: String!
+}
+
+input PersonInput {
+  name: String!
+}
+
+type Query {
+  people: [Person!]!
+  person(id: String!): Person!
+}
+
+type Subscription {
+  peopleCount: Int!
+}
+
+input UpdatePersonInput {
+  name: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UploadFileInput {
+  file: Upload!
+}

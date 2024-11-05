@@ -14,6 +14,7 @@ builder.Services
     .AddSubscriptionType<Subscription>()
     .AddInMemorySubscriptions()
     ;
+
 var app = builder.Build();
 app.MapGraphQL();
 app.UseWebSockets();//需要使用这个
