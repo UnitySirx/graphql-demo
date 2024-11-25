@@ -1,7 +1,6 @@
-/* eslint-disable */
 import gql from 'graphql-tag';
 import * as VueApolloComposable from '@vue/apollo-composable';
-import {Ref} from "vue";
+import type * as VueCompositionApi from 'vue';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -17,7 +16,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any; }
 };
 
@@ -131,6 +129,7 @@ export type UploadFileMutationVariables = Exact<{
 
 export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
 
+
 export const CreatePersonDocument = gql`
     mutation createPerson($input: PersonInput!) {
   createPerson(input: $input) {
@@ -209,10 +208,10 @@ export const QueryPeopleDocument = gql`
  * @example
  * const { result, loading, error } = useQueryPeopleQuery();
  */
-export function useQueryPeopleQuery(options: VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables> | Ref<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> = {}) {
+export function useQueryPeopleQuery(options: VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> = {}) {
   return VueApolloComposable.useQuery<QueryPeopleQuery, QueryPeopleQueryVariables>(QueryPeopleDocument, {}, options);
 }
-export function useQueryPeopleLazyQuery(options: VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables> | Ref<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> = {}) {
+export function useQueryPeopleLazyQuery(options: VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPeopleQuery, QueryPeopleQueryVariables>> = {}) {
   return VueApolloComposable.useLazyQuery<QueryPeopleQuery, QueryPeopleQueryVariables>(QueryPeopleDocument, {}, options);
 }
 export type QueryPeopleQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<QueryPeopleQuery, QueryPeopleQueryVariables>;
@@ -240,10 +239,10 @@ export const QueryPersonDocument = gql`
  *   id: // value for 'id'
  * });
  */
-export function useQueryPersonQuery(variables: QueryPersonQueryVariables | Ref<QueryPersonQueryVariables> | ReactiveFunction<QueryPersonQueryVariables>, options: VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables> | Ref<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> = {}) {
+export function useQueryPersonQuery(variables: QueryPersonQueryVariables | VueCompositionApi.Ref<QueryPersonQueryVariables> | ReactiveFunction<QueryPersonQueryVariables>, options: VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> = {}) {
   return VueApolloComposable.useQuery<QueryPersonQuery, QueryPersonQueryVariables>(QueryPersonDocument, variables, options);
 }
-export function useQueryPersonLazyQuery(variables?: QueryPersonQueryVariables | Ref<QueryPersonQueryVariables> | ReactiveFunction<QueryPersonQueryVariables>, options: VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables> | Ref<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> = {}) {
+export function useQueryPersonLazyQuery(variables?: QueryPersonQueryVariables | VueCompositionApi.Ref<QueryPersonQueryVariables> | ReactiveFunction<QueryPersonQueryVariables>, options: VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<QueryPersonQuery, QueryPersonQueryVariables>> = {}) {
   return VueApolloComposable.useLazyQuery<QueryPersonQuery, QueryPersonQueryVariables>(QueryPersonDocument, variables, options);
 }
 export type QueryPersonQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<QueryPersonQuery, QueryPersonQueryVariables>;

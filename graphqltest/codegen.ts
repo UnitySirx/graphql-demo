@@ -1,31 +1,28 @@
-
 import type { CodegenConfig } from '@graphql-codegen/cli';
-import vue from "@vitejs/plugin-vue";
 
 const config: CodegenConfig = {
   overwrite: true,
   schema: "http://localhost:5293/graphql/",
   documents: "src/**/*.graphql",
-  ignoreNoDocuments: true, // for better experience with the watcher
+  ignoreNoDocuments: true,
   generates: {
-    './src/gql/': {
-      preset: 'client',
-      config: {
-        useTypeImports: true,
-        withCompositionFunctions: true,
-        vueApolloComposableImportFrom: vue,
-      },
+    './src/gql/graphql.ts': {
       plugins: [
-        "@graphql-codegen/typescript-vue-apollo",
+        'typescript', 'typescript-operations', 'typescript-vue-apollo'
       ],
+      config: {
+        useTypeImports: true, // 使用 TypeScript 的类型导入语法
+        withCompositionFunctions: true, // 生成 Vue Composition API 的代码
+        vueCompositionApiImportFrom: 'vue',
+      },
     },
     "./schema.graphql": {
-      plugins: ["schema-ast"],
+      plugins: ["schema-ast"], // 生成完整的 schema 文件
       config: {
         includeDirectives: true,
       },
     },
-  }
+  },
 };
 
 export default config;
