@@ -33,7 +33,6 @@ export default defineConfig({
         target:'ws://localhost:5293',
         changeOrigin:true,
         rewrite:path => path.replace(/^\/ws/,'/ws'),
-        ws: true, // 开启 WebSocket 代理支持
       }
     }
   },

@@ -14,6 +14,21 @@ directive @cost(
   weight: String!
 ) on ARGUMENT_DEFINITION | ENUM | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | OBJECT | SCALAR
 
+"""Defines when a policy shall be executed."""
+enum ApplyPolicy {
+  """After the resolver was executed."""
+  AFTER_RESOLVER
+  """Before the resolver was executed."""
+  BEFORE_RESOLVER
+  """The policy is applied in the validation step before the execution."""
+  VALIDATION
+}
+
+input LoginUserDtoInput {
+  password: String!
+  username: String!
+}
+
 type Mutation {
   createPerson(input: PersonInput!): Person!
   createPersonRange(inputs: [PersonInput!]!): [Person!]!
@@ -32,6 +47,7 @@ input PersonInput {
 }
 
 type Query {
+  login(user: LoginUserDtoInput!): String!
   people: [Person!]!
   person(id: String!): Person!
 }

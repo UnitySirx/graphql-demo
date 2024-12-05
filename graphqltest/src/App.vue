@@ -2,9 +2,11 @@
 import HelloWorld from "@/components/HelloWorld.vue";
 import Upload from "@/components/Upload.vue";
 import Subscription from "@/components/Subscription.vue";
+import Login from "@/components/Login.vue";
 </script>
 
 <template>
+  <Login/>
   <Subscription/>
   <Upload/>
   <HelloWorld/>

@@ -1,13 +1,36 @@
-using HotChocolate.Subscriptions;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
+using water_api.Services;
+using WebEmpty;
+using WebEmpty.Controller;
+using WebEmpty.jwt;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                ;
+        });
+});
+
+builder.Services.AddSingleton<IJwtOptionIOC, JwtOptionIOC>();
+builder.Services.AddSingleton<IJwtHelper, JwtHelper>();
+builder.Services.AddJwtService(new JwtOptionIOC(builder.Configuration));
+builder.Services.AddSingleton<ILoginService, LoginService>();
+
 builder.Services.AddSingleton<IPeopleCountService, PeopleCountService>();
 builder.Services.AddSingleton(new InMemoryData());
 
+
 builder.Services
     .AddGraphQLServer()
+    .AddAuthorization()
+    .AddSocketSessionInterceptor<CustomWebSocketSessionInterceptor>()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
     .AddType<UploadType>()
@@ -15,8 +38,17 @@ builder.Services
     .AddInMemorySubscriptions()
     ;
 var app = builder.Build();
+
+app.UseRouting();
+app.UseCors("AllowSpecificOrigins");
+
+app.MapFallbackToFile("index.html");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseWebSockets(); //增加webSocket
 app.MapGraphQL();
-app.UseWebSockets();//需要使用这个
 app.MapGraphQLWebSocket("/ws");//增加webSocket扩展
 
 // 配置静态文件中间件
@@ -25,15 +57,27 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
     RequestPath = "", // 基础路径为 "/"
 });
-app.MapFallbackToFile("{*path}", "index.html");
 app.Urls.Add("http://0.0.0.0:5293");
 app.Run();
 
+
+public class LoginUserDto
+{
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
+public class User
+{
+    public Guid Id { get; set; } = Guid.CreateVersion7();
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
 
 public class Person
 {
     public string Id { get; set; }
     public string Name { get; set; }
+
 }
 
 public class UpdatePersonInput
@@ -48,6 +92,7 @@ public class PersonInput
 
 public class InMemoryData
 {
+    
     public List<Person> People { get; } = new List<Person>();
 
     public void AddPerson(Person person)
@@ -85,119 +130,5 @@ public class UploadFile
    public IFile File { get; set; }
 }
 
-public class Query
-{
-    private readonly InMemoryData _data;
-
-    public Query(InMemoryData data)
-    {
-        _data = data;
-    }
-
-    public IQueryable<Person> GetPeople() => _data.People.AsQueryable();
-
-    public Person GetPerson(string id) => _data.GetPersonById(id);
-}
-
-public class Mutation
-{
-    private readonly InMemoryData _data;
-    private readonly IPeopleCountService _peopleCountService;
-
-    public Mutation(InMemoryData data,IPeopleCountService peopleCountService)
-    {
-        _data = data;
-        _peopleCountService = peopleCountService;
-    }
-
-    public async Task<Person> CreatePerson(PersonInput input)
-    {
-        var person = new Person
-        {
-            Id = Guid.NewGuid().ToString("N"),
-            Name = input.Name
-        };
-        _data.AddPerson(person);
-        await _peopleCountService.UpdateDeviceAsync(_data.People.Count);
-        return person;
-    }
-
-    public List<Person> CreatePersonRange(List<PersonInput> inputs)
-    {
-        List<Person> persons = new List<Person>();
-        foreach (var item in inputs)
-        {
-            var person = new Person
-            {
-                Id = Guid.NewGuid().ToString("N"),
-                Name = item.Name
-            };
-            persons.Add(person);
-        }
-
-        _data.AddPersonRange(persons);
-        return persons;
-    }
-
-    public Person UpdatePerson(string id, UpdatePersonInput input)
-    {
-        var person = _data.GetPersonById(id);
-        if (person != null)
-        {
-            person.Name = input.Name;
-            return person;
-        }
-
-        throw new Exception("Person not found");
-    }
-
-    public async Task<bool> DeletePerson(string id)
-    {
-        var success = _data.People.RemoveAll(p => p.Id.Equals(id)) > 0;
-        await _peopleCountService.UpdateDeviceAsync(_data.People.Count);
-        return success;
-    }
-    
-    public async Task<string> UploadFile(UploadFile input,CancellationToken cancellationToken)
-    {
-        if (Directory.Exists("Uploads") == false)
-        {
-            Directory.CreateDirectory("Uploads");
-        }
-        var filePath = System.IO.Path.Combine("Uploads", input.File.Name);
-        await using var stream = File.Create(filePath);
-        await input.File.CopyToAsync(stream,cancellationToken);
-        return filePath;
-    }
-}
 
 
-public interface IPeopleCountService
-{
-    Task UpdateDeviceAsync(int count);
-}
-public class PeopleCountService:IPeopleCountService
-{
-    private readonly ITopicEventSender _eventSender;
-
-    public PeopleCountService(ITopicEventSender eventSender)
-    {
-        _eventSender = eventSender;
-    }
-    
-    public async Task UpdateDeviceAsync(int count)
-    {
-        // 这里你可以发布事件
-        await _eventSender.SendAsync(nameof(Subscription.PeopleCount), count);
-        await Console.Out.WriteLineAsync($"数量:{count}");
-    }
-}
-public class Subscription
-{
-    [Subscribe]
-    [Topic]
-    public int PeopleCount([EventMessage]int count)
-    {
-        return count;
-    }
-}

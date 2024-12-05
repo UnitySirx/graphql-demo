@@ -19,6 +19,21 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+/** Defines when a policy shall be executed. */
+export enum ApplyPolicy {
+  /** After the resolver was executed. */
+  AfterResolver = 'AFTER_RESOLVER',
+  /** Before the resolver was executed. */
+  BeforeResolver = 'BEFORE_RESOLVER',
+  /** The policy is applied in the validation step before the execution. */
+  Validation = 'VALIDATION'
+}
+
+export type LoginUserDtoInput = {
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPerson: Person;
@@ -66,8 +81,14 @@ export type PersonInput = {
 
 export type Query = {
   __typename?: 'Query';
+  login: Scalars['String']['output'];
   people: Array<Person>;
   person: Person;
+};
+
+
+export type QueryLoginArgs = {
+  user: LoginUserDtoInput;
 };
 
 
@@ -101,6 +122,13 @@ export type DeletePersonMutationVariables = Exact<{
 
 
 export type DeletePersonMutation = { __typename?: 'Mutation', deletePerson: boolean };
+
+export type LoginQueryVariables = Exact<{
+  user: LoginUserDtoInput;
+}>;
+
+
+export type LoginQuery = { __typename?: 'Query', login: string };
 
 export type QueryPeopleQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -187,6 +215,34 @@ export function useDeletePersonMutation(options: VueApolloComposable.UseMutation
   return VueApolloComposable.useMutation<DeletePersonMutation, DeletePersonMutationVariables>(DeletePersonDocument, options);
 }
 export type DeletePersonMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<DeletePersonMutation, DeletePersonMutationVariables>;
+export const LoginDocument = gql`
+    query login($user: LoginUserDtoInput!) {
+  login(user: $user)
+}
+    `;
+
+/**
+ * __useLoginQuery__
+ *
+ * To run a query within a Vue component, call `useLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginQuery` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param variables that will be passed into the query
+ * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useLoginQuery({
+ *   user: // value for 'user'
+ * });
+ */
+export function useLoginQuery(variables: LoginQueryVariables | VueCompositionApi.Ref<LoginQueryVariables> | ReactiveFunction<LoginQueryVariables>, options: VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<LoginQuery, LoginQueryVariables>(LoginDocument, variables, options);
+}
+export function useLoginLazyQuery(variables?: LoginQueryVariables | VueCompositionApi.Ref<LoginQueryVariables> | ReactiveFunction<LoginQueryVariables>, options: VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<LoginQuery, LoginQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<LoginQuery, LoginQueryVariables>(LoginDocument, variables, options);
+}
+export type LoginQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<LoginQuery, LoginQueryVariables>;
 export const QueryPeopleDocument = gql`
     query queryPeople {
   people {
